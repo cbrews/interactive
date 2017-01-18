@@ -25,3 +25,7 @@ This scaffold comes pre-installed with flask (of course), and uses mysql and sql
     ```
 
 From there you can update your git remote and start developing!  Configuration parameters should be configured in the root directory config.py.
+
+# TODO
+1. Finish story work
+2. New decorator that wraps routes for: auth handling, blueprinting of modules, json response

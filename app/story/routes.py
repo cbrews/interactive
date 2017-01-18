@@ -1,21 +1,33 @@
-import flask
-import app.access as Access
-import json
-from app import app, db
-from models import Page, Campaign
+from flask import jsonify
+from app import web, db, auth
+from app.story import Story, Story_Page, Story_Page_Lock, Story_Page_Content
 
-@app.errorhandler(404)
-def no_route(e):
-    return flask.jsonify({'error': 'Page Not Found'}), 404
+@web.route('/story', methods=['GET'])
+@auth.validate
+def stories():
+    return jsonify(Story.query.all())
 
-@app.errorhandler(403)
-def no_auth(e):
-    return flask.jsonify({'error': 'Not Authorized'}), 403
+@web.route('/story/<story_id>', methods=['GET'])
+@auth.validate
+def story(story_id):
+    pass # Get specific story
+
+@web.route('/story/<story_id>/start')
+@auth.validate
+def start_story(story_id):
+    pass # Start story from the beginning
+
+@web.route('/story/<story_id>/page/<pid>', methods=['GET'])
+@auth.validate
+def page(story_id, pid):
+    pass # Get specific page
+
+@web.route('/story/<story_id>/page/<pid>/unlock', methods=['POST'])
+@auth.validate
+def unlock(story_id, pid):
+    pass # Unlock next page
 
 '''
-Frontend facing routes
-'''
-
 @app.route('/campaign')
 def campaigns():
     campaigns = Campaign.query.all()
@@ -53,3 +65,4 @@ def page(id):
         })
     else:
         flask.abort(403)
+'''

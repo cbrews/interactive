@@ -3,3 +3,4 @@ sqlalchemy
 Flask-SQLAlchemy
 mysql
 python-dateutil
+itsdangerous

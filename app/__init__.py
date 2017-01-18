@@ -1,10 +1,14 @@
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
+from app.authentication import Auth
+from app.autoload import Autoloader
 
-app = Flask(__name__)
-app.config.from_object('config')
-db = SQLAlchemy(app)
+web = Flask(__name__, template_folder="../templates")
+web.config.from_object('config')
+db = SQLAlchemy(web)
+auth = Auth()
 
-import router
+# Load all application controllers
+Autoloader(__path__, __name__)
 
 db.create_all()
