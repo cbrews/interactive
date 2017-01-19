@@ -1,7 +1,7 @@
 from app import web, db
 from app.authentication.user import User
 from app.story import Story, Story_Page, Story_Page_Lock, Story_Page_Content
-from app.core.cryptography import random_string
+from app.cryptography import random_string
 
 admin_user = User("admin", "admin")
 
@@ -16,5 +16,9 @@ db.session.add(story)
 db.session.add(content1)
 db.session.add(lock1)
 db.session.add(page1)
+db.session.commit()
 
+story.first_page_id = page1.id
+
+db.session.add(story)
 db.session.commit()

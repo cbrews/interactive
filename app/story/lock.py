@@ -1,7 +1,7 @@
 from app import web, db
-from app.core.model import Core
+from datetime import datetime
 
-class Story_Page_Lock(Core):
+class Story_Page_Lock(db.Model):
     TYPE_NONE = 'NONE'
     TYPE_PASSWORD = 'PASSWORD'
     TYPE_TIMESTAMP = 'TIMESTAMP'
@@ -10,6 +10,11 @@ class Story_Page_Lock(Core):
     TYPE_UNIVERSAL = 'UNIVERSAL'
 
     __tablename__ = 'story_page_lock'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     type = db.Column(db.String(128), nullable=False)
     key = db.Column(db.Text)

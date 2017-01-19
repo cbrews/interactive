@@ -1,40 +1,32 @@
 from app import web, db
-from app.core.model import Core
-from app.core.cryptography import random_string
-from itsdangerous import JSONWebSignatureSerializer, BadSignature, SignatureExpired
+from datetime import datetime
+from app.cryptography import Serializer, random_string
 
-class Story_Page(Core):
+class Story_Page(db.Model):
     __tablename__ = 'story_page'
 
+    id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
     next_id = db.Column(db.Integer, db.ForeignKey('story_page.id'))
-    hash = db.Column(db.String(256), nullable=False)
-    secret_key = db.Column(db.String(2048), nullable=False)
+    hash = db.Column(db.String(256), nullable=False, unique=True)
+    secret_key = db.Column(db.String(4096), nullable=False)
     story_id = db.Column(db.Integer, db.ForeignKey('story.id'), nullable=False)
     content_id = db.Column(db.Integer, db.ForeignKey('story_page_content.id'))
     lock_id = db.Column(db.Integer, db.ForeignKey('story_page_lock.id'))
 
-    token_serializer = None
-
     def __init__(self, **kwargs):
-        self.hash = random_string(64)
+        self.hash = random_string(64) # Not sure if this is necessarily unique enough, TBD
+        print len(self.hash)
         self.secret_key = random_string(2048)
+        print len(self.secret_key)
 
         super(Story_Page, self).__init__(**kwargs)
 
-    def getTokenSerializer(self):
-        if not self.token_serializer:
-            self.token_serializer = JSONWebSignatureSerializer(self.secret_key)
-        return self.token_serializer
-
     def getSignedToken(self, uuid):
-        return self.getTokenSerializer().dumps(uuid)
+        return Serializer(self.secret_key).create_token(uuid)
 
     def authenticateHash(self, token):
-        try:
-            return self.getTokenSerializer().loads(token)
-        except SignatureExpired:
-            # Valid token but signature expired
-            return None
-        except BadSignature:
-            # Invalid token
-            return None
+        return Serializer(self.secret_key).validate_token(token)

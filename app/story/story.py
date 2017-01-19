@@ -1,10 +1,14 @@
 from app import web, db
-from app.core.model import Core
 from app.story import Story_Page
 from datetime import datetime
 
-class Story(Core):
+class Story(db.Model):
     __tablename__ = 'story'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     active = db.Column(db.SmallInteger)
     startdate = db.Column(db.DateTime)

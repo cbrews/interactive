@@ -1,7 +1,8 @@
 from app import web, db
-from app.core.model import Core
+from datetime import datetime
 
-class Story_Page_Content(Core):
+
+class Story_Page_Content(db.Model):
     TYPE_AUTO = 'AUTO'
     TYPE_TEXT = 'TEXT'
     TYPE_IMAGE = 'IMAGE'
@@ -10,6 +11,11 @@ class Story_Page_Content(Core):
     TYPE_HTML = 'HTML'
 
     __tablename__ = 'story_page_content'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     type = db.Column(db.String(128), nullable=False)
     body = db.Column(db.Text)

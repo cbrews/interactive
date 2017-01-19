@@ -1,6 +1,6 @@
 from app import web, db
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import JSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
+from app.cryptography import Serializer
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -18,8 +18,7 @@ class User(db.Model):
         return check_password_hash(self.password, password)
 
     def generateToken(self):
-        tokengen = Serializer(web.config["SECRET_KEY"])
-        return tokengen.dumps({"username": self.username})
+        return Serializer(web.config["SECRET_KEY"]).create_token({"username": self.username})
 
     @classmethod
     def getByUsername(this, username):
@@ -35,14 +34,8 @@ class User(db.Model):
 
     @classmethod
     def getTokenUser(this, token):
-        tokengen = Serializer(web.config["SECRET_KEY"])
-        try:
-            data = tokengen.loads(token)
-            user = this.getByUsername(data['username'])
-            return user
-        except SignatureExpired:
-            # Valid token but signature expired
-            return None
-        except BadSignature:
-            # Invalid token
-            return None
+        data = Serializer(web.config["SECRET_KEY"]).validate_token(token)
+
+        if data:
+            return this.getByUsername(data['username'])
+        return None
