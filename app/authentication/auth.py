@@ -14,7 +14,7 @@ class Auth:
             if user is not None:
                 return fn(*args, **kwargs)
             else:
-                abort(403)
+                abort(401)
 
         return tokenVerification
 

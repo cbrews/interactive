@@ -12,7 +12,7 @@ def login():
     valid_user = User.getAuthUser(params['username'], params['password'])
 
     if not valid_user:
-        abort(403)
+        abort(401)
 
     return valid_user.generateToken(), {'Content-Type': 'text/plain'}
 
