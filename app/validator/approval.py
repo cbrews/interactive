@@ -1,1 +1,2 @@
-from . import Base_Lock_Validator
+class Validator_Approval(Base_Lock_Validator):
+    pass
